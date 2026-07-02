@@ -7,15 +7,20 @@ export const dynamic = 'force-dynamic';
 const initFirebase = () => {
   if (!admin.apps.length) {
     try {
-      let privateKey = process.env.FIREBASE_PRIVATE_KEY;
-      if (!privateKey) throw new Error('Firebase Private Key is missing');
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
 
-      // Super strict cleaning for Vercel environment
-      privateKey = privateKey.replace(/\\n/g, '\n'); // Convert literal \n to actual newlines
-      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-        privateKey = privateKey.substring(1, privateKey.length - 1);
+      // Super Robust Cleaning: regex to find the PEM content
+      const match = privateKey.match(/-----BEGIN PRIVATE KEY-----[\s\S]*?-----END PRIVATE KEY-----/);
+      if (match) {
+        privateKey = match[0].replace(/\\n/g, '\n');
+      } else {
+        privateKey = privateKey.replace(/\\n/g, '\n').replace(/"/g, '').trim();
       }
-      privateKey = privateKey.trim();
+
+      if (!privateKey) {
+        console.error('Firebase Private Key is missing or invalid');
+        return null;
+      }
 
       admin.initializeApp({
         credential: admin.credential.cert({
@@ -27,9 +32,10 @@ const initFirebase = () => {
       });
     } catch (error) {
       console.error('Firebase Init Error:', error);
+      return null;
     }
   }
-  return admin.storage().bucket();
+  return admin.apps.length ? admin.storage().bucket() : null;
 };
 
 export async function POST(request: Request) {
@@ -40,6 +46,10 @@ export async function POST(request: Request) {
 
   try {
     const bucket = initFirebase();
+    if (!bucket) {
+      return NextResponse.json({ error: 'Storage not initialized' }, { status: 500 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
