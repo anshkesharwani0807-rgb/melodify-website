@@ -8,14 +8,13 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
   title: "Melodify | Experience Music. Reimagined.",
   description: "A modern offline music player crafted for Android with beautiful design and premium performance.",
   openGraph: {
     title: "Melodify | Experience Music. Reimagined.",
     description: "The official website for the Melodify Android Music Player.",
     type: "website",
-    images: ["/screenshots/home.png"],
+    images: ["/logo.png"],
   },
 };
 

@@ -35,5 +35,8 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8",
     "eslint-config-next": "15.1.10"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   }
 }
