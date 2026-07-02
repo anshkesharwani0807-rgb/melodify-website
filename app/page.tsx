@@ -2,12 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Download, Github, ChevronDown, Music2, ShieldCheck, Zap, Library,
-  Smartphone, Mail, Globe, ExternalLink, Cpu, Layers, Play,
-  Star, Users, Headset, HardDrive, Share2, Search, Heart,
-  Settings, Radio, Headphones, Disc
+  Download, Github, ShieldCheck, Zap, Mail, Cpu, Headset, Headphones
 } from 'lucide-react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -79,17 +76,13 @@ export default function MelodifyOfficial() {
 
   useEffect(() => {
     fetchSettings();
-  }, []);
-
-  useEffect(() => {
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
     const ctx = gsap.context(() => {
-      gsap.from(".reveal-text", { y: 100, opacity: 0, duration: 1.5, stagger: 0.2, ease: "power4.out", scrollTrigger: { trigger: ".reveal-text", start: "top 85%" } });
       ScrollTrigger.create({
-        trigger: "#showcase", start: "top top", end: "+=400", pin: "#phone-anchor", scrub: 1,
+        trigger: "#showcase", start: "top top", end: "+=600", pin: "#phone-anchor", scrub: 1,
         onUpdate: (self) => setActiveIndex(Math.min(Math.floor(self.progress * SCREENSHOTS_CONFIG.length), SCREENSHOTS_CONFIG.length - 1))
       });
     });
@@ -113,79 +106,80 @@ export default function MelodifyOfficial() {
   };
 
   return (
-    <main ref={containerRef} className="bg-[#020202] text-white relative selection:bg-[#6C5CE7]/40">
+    <main ref={containerRef} className="bg-[#020202] text-white relative selection:bg-[#6C5CE7]/40 overflow-x-hidden">
       <CustomCursor />
 
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#6C5CE7]/10 rounded-full blur-[140px] animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#00E5FF]/10 rounded-full blur-[140px] animate-pulse" />
-        <div className="absolute top-[30%] left-[40%] w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent opacity-20" />
       </div>
 
       <HeroVisual />
 
       {/* 🧭 NAVIGATION */}
-      <nav className="fixed w-full z-[100] px-6 md:px-12 py-8 flex justify-between items-center backdrop-blur-md border-b border-white/[0.03]">
-        <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center group-hover:bg-[#6C5CE7] transition-all duration-700 shadow-glow overflow-hidden">
+      <nav className="fixed w-full z-[100] px-4 md:px-12 py-4 md:py-8 flex justify-between items-center backdrop-blur-md border-b border-white/[0.03]">
+        <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-[#6C5CE7] transition-all duration-700 shadow-glow overflow-hidden">
             <img src={settings.appLogo || '/logo.png'} className="w-full h-full object-cover" />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="font-black text-2xl tracking-tighter uppercase italic">Melodify</span>
-            <span className="text-[8px] font-bold tracking-[0.5em] text-white/60 uppercase">Offline Lab</span>
+            <span className="font-black text-lg md:text-2xl tracking-tighter uppercase italic text-white">Melodify</span>
+            <span className="text-[6px] md:text-[8px] font-bold tracking-[0.5em] text-white/60 uppercase">Offline Lab</span>
           </div>
         </div>
         <div className="hidden lg:flex gap-12 text-[10px] font-black tracking-[0.4em] text-white/60 uppercase items-center">
           <a href="#showcase" className="hover:text-white transition-all">Showcase</a>
           <a href="#features" className="hover:text-white transition-all">Features</a>
-          <a href="#stats" className="hover:text-white transition-all">Insights</a>
           <a href="#developer" className="hover:text-white transition-all">Creator</a>
           <a href="/admin" className="px-6 py-2 rounded-full border border-[#6C5CE7]/30 glass text-[#6C5CE7] hover:bg-[#6C5CE7] hover:text-white transition-all">Portal</a>
           <span className="px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.02] text-white/60">{settings.version}</span>
         </div>
+        <div className="lg:hidden">
+           <a href="/admin" className="text-[8px] font-black tracking-widest px-4 py-2 border border-[#6C5CE7]/30 rounded-full text-[#6C5CE7] glass uppercase">Portal</a>
+        </div>
       </nav>
 
       {/* ⚡ HERO SECTION */}
-      <section className="relative min-h-[120vh] flex flex-col items-center justify-center pt-20 px-6 z-10 overflow-hidden">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="text-center relative">
-          <div className="mb-10 inline-flex items-center gap-3 px-5 py-2 rounded-full glass border-white/10">
-            <span className="w-2 h-2 rounded-full bg-[#6C5CE7] animate-ping" />
-            <span className="text-[10px] font-black tracking-[0.4em] text-white/70 uppercase">Engineered for Android High-Fidelity</span>
+      <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 px-4 md:px-6 z-10 overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="text-center relative w-full">
+          <div className="mb-6 md:mb-10 inline-flex items-center gap-2 md:gap-3 px-4 py-1.5 md:px-5 md:py-2 rounded-full glass border-white/10">
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#6C5CE7] animate-ping" />
+            <span className="text-[8px] md:text-[10px] font-black tracking-[0.3em] md:tracking-[0.4em] text-white/70 uppercase">Engineered for Android High-Fidelity</span>
           </div>
-          <h1 className="text-[14vw] md:text-[13rem] font-black leading-[0.8] tracking-tighter mb-10 mix-blend-difference">
-            LISTEN. <br/> <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-[#6C5CE7] via-white to-[#00E5FF] opacity-90 text-white">UNBOUND.</span>
+          <h1 className="text-[12vw] md:text-[10rem] font-black leading-[0.9] tracking-tighter mb-6 md:mb-10 text-white">
+            LISTEN. <br className="hidden md:block"/> <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-[#6C5CE7] via-white to-[#00E5FF] opacity-90 text-white">UNBOUND.</span>
           </h1>
-          <p className="text-white/60 text-lg md:text-2xl max-w-4xl mx-auto mb-16 font-medium leading-relaxed tracking-tight">
-            An uncompromising offline music sanctuary. Beautifully minimalist. <br/>
+          <p className="text-white/60 text-sm md:text-2xl max-w-3xl mx-auto mb-10 md:mb-16 font-medium leading-relaxed tracking-tight px-4">
+            An uncompromising offline music sanctuary. Beautifully minimalist. <br className="hidden md:block"/>
             No analytics. No telemetry. Just you and your collection.
           </p>
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <a href={settings.apkLink} target="_blank" className="px-14 py-7 rounded-[2rem] bg-white text-black font-black text-xl flex items-center gap-4 shadow-2xl hover:scale-105 transition-transform active:scale-95">
-              <Download size={28} strokeWidth={3} /> GET MELODIFY
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-8 justify-center items-center px-4">
+            <a href={settings.apkLink} target="_blank" className="w-full sm:w-auto px-10 py-5 md:px-14 md:py-7 rounded-2xl md:rounded-[2rem] bg-white text-black font-black text-base md:text-xl flex items-center justify-center gap-3 shadow-2xl hover:scale-105 transition-transform active:scale-95">
+              <Download size={24} strokeWidth={3} /> GET MELODIFY
             </a>
-            <a href={settings.github} target="_blank" className="px-14 py-7 rounded-[2rem] glass text-white font-black text-xl flex items-center gap-4 hover:bg-white/5 border-white/10 transition-all">
-              <Github size={28} /> SOURCE
+            <a href={settings.github} target="_blank" className="w-full sm:w-auto px-10 py-5 md:px-14 md:py-7 rounded-2xl md:rounded-[2rem] glass text-white font-black text-base md:text-xl flex items-center justify-center gap-3 hover:bg-white/5 border-white/10 transition-all">
+              <Github size={24} /> SOURCE
             </a>
           </div>
         </motion.div>
       </section>
 
       {/* 🚀 QUICK STATS */}
-      <section id="stats" className="pt-40 pb-10 relative z-10 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
+      <section id="stats" className="py-20 md:py-40 relative z-10 px-4 md:px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 text-center">
            {[
-             { label: "Indexing Speed", val: "10k+", unit: "Tracks/sec", icon: <Cpu className="text-[#6C5CE7]" /> },
-             { label: "Privacy Rating", val: "100%", unit: "Offline", icon: <ShieldCheck className="text-emerald-400" /> },
-             { label: "App Latency", val: "0.2", unit: "ms", icon: <Zap className="text-[#00E5FF]" /> },
-             { label: "File Support", val: "24", unit: "Bit Lossless", icon: <Headphones className="text-pink-500" /> },
+             { label: "Indexing", val: "10k+", unit: "Tracks", icon: <Cpu className="text-[#6C5CE7]" /> },
+             { label: "Privacy", val: "100%", unit: "Offline", icon: <ShieldCheck className="text-emerald-400" /> },
+             { label: "Latency", val: "0.2", unit: "ms", icon: <Zap className="text-[#00E5FF]" /> },
+             { label: "Audio", val: "24", unit: "Bit", icon: <Headset className="text-pink-500" /> },
            ].map((s, i) => (
-             <div key={i} className="glass p-10 rounded-[3rem] border-white/5 flex flex-col items-center gap-6 group hover:border-white/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">{s.icon}</div>
+             <div key={i} className="glass p-6 md:p-10 rounded-3xl md:rounded-[3rem] border-white/5 flex flex-col items-center gap-4 md:gap-6 group">
+                <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">{s.icon}</div>
                 <div>
-                   <h4 className="text-[10px] font-black tracking-widest text-white/30 uppercase mb-2">{s.label}</h4>
-                   <div className="flex items-baseline gap-2">
-                      <span className="text-5xl font-black">{s.val}</span>
-                      <span className="text-xs font-bold text-white/40">{s.unit}</span>
+                   <h4 className="text-[8px] md:text-[10px] font-black tracking-widest text-white/30 uppercase mb-1">{s.label}</h4>
+                   <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-2xl md:text-5xl font-black">{s.val}</span>
+                      <span className="text-[8px] md:text-xs font-bold text-white/40">{s.unit}</span>
                    </div>
                 </div>
              </div>
@@ -196,13 +190,13 @@ export default function MelodifyOfficial() {
       {/* 📱 SHOWCASE */}
       <section id="showcase" className="relative z-10 bg-[#050505]">
         <div id="phone-anchor" className="h-screen flex items-center justify-center sticky top-0 overflow-hidden bg-black/40 backdrop-blur-sm">
-          <div className="max-w-[1600px] w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center px-12">
+          <div className="max-w-[1600px] w-full grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-center px-6 md:px-12">
             <div className="hidden lg:block">
               <AnimatePresence mode="wait">
                 <motion.div key={SCREENSHOTS_CONFIG[activeIndex]?.id} initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 100 }} transition={{ duration: 0.8 }} className="space-y-12">
                   <span className="text-[#6C5CE7] font-black text-sm uppercase tracking-[0.8em]">Module 0{activeIndex + 1}</span>
-                  <h2 className="text-[8rem] font-black tracking-tighter leading-none">{SCREENSHOTS_CONFIG[activeIndex]?.title}</h2>
-                  <p className="text-white/40 text-3xl leading-snug max-w-xl font-medium">{SCREENSHOTS_CONFIG[activeIndex]?.desc}</p>
+                  <h2 className="text-5xl md:text-[8rem] font-black tracking-tighter leading-none">{SCREENSHOTS_CONFIG[activeIndex]?.title}</h2>
+                  <p className="text-white/40 text-xl md:text-3xl leading-snug max-w-xl font-medium">{SCREENSHOTS_CONFIG[activeIndex]?.desc}</p>
                   <div className="flex gap-4">
                     {SCREENSHOTS_CONFIG.map((_, i) => (
                       <div key={i} className={`h-1 rounded-full transition-all duration-700 ${i === activeIndex ? 'w-24 bg-white' : 'w-8 bg-white/10'}`} />
@@ -211,11 +205,15 @@ export default function MelodifyOfficial() {
                 </motion.div>
               </AnimatePresence>
             </div>
-            <div className="flex justify-center perspective-[3000px]">
-              <div className="w-[320px] md:w-[380px] aspect-[9/19.5] bg-[#050505] rounded-[4rem] border-[12px] border-[#151515] relative overflow-hidden shadow-2xl ring-1 ring-white/10">
+            <div className="flex flex-col items-center justify-center perspective-[3000px] w-full">
+              <div className="w-[260px] md:w-[380px] aspect-[9/19.5] bg-[#050505] rounded-[3rem] md:rounded-[4rem] border-[8px] md:border-[12px] border-[#151515] relative overflow-hidden shadow-2xl ring-1 ring-white/10">
                 <AnimatePresence mode="wait">
                   <motion.img key={SCREENSHOTS_CONFIG[activeIndex]?.id} src={SCREENSHOTS_CONFIG[activeIndex]?.src} initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.6 }} className="w-full h-full object-cover" />
                 </AnimatePresence>
+              </div>
+              <div className="lg:hidden mt-8 text-center px-4">
+                 <h3 className="text-2xl font-black tracking-tight">{SCREENSHOTS_CONFIG[activeIndex]?.title}</h3>
+                 <p className="text-white/40 text-sm mt-2">{SCREENSHOTS_CONFIG[activeIndex]?.desc}</p>
               </div>
             </div>
           </div>
@@ -224,47 +222,47 @@ export default function MelodifyOfficial() {
       </section>
 
       {/* 💎 FEATURES */}
-      <section id="features" className="pt-0 pb-60 px-6 max-w-[1400px] mx-auto z-10 relative">
-        <div className="mb-32">
-           <h2 className="text-7xl md:text-[10rem] font-black tracking-tighter leading-none mb-8">CORE <br/> <span className="text-white/20 italic">ARCHIVE.</span></h2>
-           <p className="text-white/40 text-2xl font-medium max-w-xl italic">Premium by design, private by choice.</p>
+      <section id="features" className="py-20 md:py-60 px-4 md:px-6 max-w-[1400px] mx-auto z-10 relative">
+        <div className="mb-16 md:mb-32">
+           <h2 className="text-5xl md:text-[10rem] font-black tracking-tighter leading-none mb-4 md:mb-8 text-white">CORE <br/> <span className="text-white/20 italic">ARCHIVE.</span></h2>
+           <p className="text-white/40 text-lg md:text-2xl font-medium max-w-xl italic">Premium by design, private by choice.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-           <div className="md:col-span-8 glass p-16 md:p-24 rounded-[4rem] group hover:border-[#6C5CE7]/30 transition-all border-white/5">
-              <ShieldCheck size={50} className="text-[#00E5FF] mb-12" />
-              <h3 className="text-6xl font-black mb-8 tracking-tighter uppercase leading-[0.85]">ZERO TRACKING. <br/> TOTAL CONTROL.</h3>
-              <p className="text-white/40 text-2xl leading-relaxed max-w-2xl font-medium">Your musical identity is yours alone. We use native file system access to scan your local storage with zero cloud telemetry. Built for the privacy-first generation.</p>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+           <div className="md:col-span-8 glass p-8 md:p-24 rounded-[2.5rem] md:rounded-[4rem] border-white/5">
+              <ShieldCheck size={40} className="text-[#00E5FF] mb-8 md:mb-12" />
+              <h3 className="text-3xl md:text-6xl font-black mb-6 md:mb-8 tracking-tighter uppercase leading-[0.9]">ZERO TRACKING. <br/> TOTAL CONTROL.</h3>
+              <p className="text-white/40 text-base md:text-2xl leading-relaxed max-w-2xl font-medium">Your musical identity is yours alone. We use native file system access to scan your local storage with zero cloud telemetry. Built for the privacy-first generation.</p>
            </div>
-           <div className="md:col-span-4 flex flex-col gap-8 text-center">
-              <div className="flex-1 glass p-12 rounded-[3.5rem] border-white/5 group flex flex-col items-center justify-center">
-                 <Zap size={40} className="text-[#6C5CE7] mb-6 group-hover:rotate-12 transition-transform" />
-                 <h3 className="text-3xl font-black mb-2 tracking-tight">120Hz Flow</h3>
-                 <p className="text-white/30 text-base leading-relaxed">Silky smooth animations optimized for high-refresh rate displays.</p>
+           <div className="md:col-span-4 flex flex-col gap-6 md:gap-8">
+              <div className="flex-1 glass p-8 md:p-12 rounded-3xl md:rounded-[3.5rem] border-white/5 flex flex-col items-center justify-center text-center">
+                 <Zap size={30} className="text-[#6C5CE7] mb-4" />
+                 <h3 className="text-2xl md:text-3xl font-black mb-2 tracking-tight">120Hz Flow</h3>
+                 <p className="text-white/30 text-sm md:text-base leading-relaxed">Silky smooth animations optimized for high-refresh rate displays.</p>
               </div>
-              <div className="flex-1 glass p-12 rounded-[3.5rem] border-white/5 group flex flex-col items-center justify-center">
-                 <Headset size={40} className="text-pink-500 mb-6 group-hover:scale-110 transition-transform" />
-                 <h3 className="text-3xl font-black mb-2 tracking-tight">Lossless HQ</h3>
-                 <p className="text-white/30 text-base leading-relaxed">Native support for studio-quality audio formats like FLAC and ALAC.</p>
+              <div className="flex-1 glass p-8 md:p-12 rounded-3xl md:rounded-[3.5rem] border-white/5 flex flex-col items-center justify-center text-center">
+                 <Headset size={30} className="text-pink-500 mb-4" />
+                 <h3 className="text-2xl md:text-3xl font-black mb-2 tracking-tight">Lossless HQ</h3>
+                 <p className="text-white/30 text-sm md:text-base leading-relaxed">Native support for studio-quality audio formats like FLAC and ALAC.</p>
               </div>
            </div>
         </div>
       </section>
 
       {/* 📦 THE FINAL CONVERSION */}
-      <section className="py-80 text-center px-6 relative overflow-hidden bg-[#020202]">
+      <section className="py-40 md:py-80 text-center px-4 md:px-6 relative overflow-hidden bg-[#020202]">
         <div className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.02]">
-           <h2 className="text-[35vw] font-black tracking-tighter select-none italic uppercase">AURORA</h2>
+           <h2 className="text-[40vw] font-black tracking-tighter select-none italic uppercase text-white">AURORA</h2>
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto">
-           <span className="text-[#6C5CE7] font-black tracking-[0.8em] text-xs uppercase mb-10 block">End of the line.</span>
-           <h3 className="text-7xl md:text-[10rem] font-black tracking-tighter leading-none mb-20 uppercase">HEAR THE <br/> DIFFERENCE.</h3>
+           <span className="text-[#6C5CE7] font-black tracking-[0.5em] md:tracking-[0.8em] text-[8px] md:text-xs uppercase mb-6 md:mb-10 block text-white">End of the line.</span>
+           <h3 className="text-4xl md:text-[10rem] font-black tracking-tighter leading-none mb-10 md:mb-20 uppercase text-white">HEAR THE <br/> DIFFERENCE.</h3>
 
            <a
              href={settings.apkLink}
              target="_blank"
-             className="inline-block px-24 py-10 rounded-[3rem] bg-[#6C5CE7] text-white font-black text-3xl shadow-[0_40px_80px_rgba(108,92,231,0.3)] hover:shadow-[0_50px_100px_rgba(108,92,231,0.5)] transition-all cursor-pointer"
+             className="inline-block px-12 py-6 md:px-24 md:py-10 rounded-2xl md:rounded-[3rem] bg-[#6C5CE7] text-white font-black text-xl md:text-3xl shadow-[0_40px_80px_rgba(108,92,231,0.3)] hover:shadow-[0_50px_100px_rgba(108,92,231,0.5)] transition-all cursor-pointer"
            >
              DOWNLOAD {settings.version}
            </a>
@@ -272,53 +270,53 @@ export default function MelodifyOfficial() {
       </section>
 
       {/* 👤 THE CREATOR */}
-      <section id="developer" className="py-60 px-6 relative">
-         <div className="max-w-5xl mx-auto glass p-20 md:p-32 rounded-[5rem] text-center relative z-10 shadow-glow border-white/5">
-            <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="w-28 h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-16 shadow-2xl cursor-pointer overflow-hidden">
+      <section id="developer" className="py-20 md:py-60 px-4 md:px-6 relative">
+         <div className="max-w-5xl mx-auto glass p-10 md:p-32 rounded-3xl md:rounded-[5rem] text-center relative z-10 border-white/5">
+            <motion.div whileHover={{ scale: 1.1 }} className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-2xl md:rounded-[2rem] flex items-center justify-center mx-auto mb-10 md:mb-16 shadow-2xl overflow-hidden">
                {settings.creatorPic ? (
                   <img src={settings.creatorPic} className="w-full h-full object-cover" />
                ) : (
-                  <span className="text-5xl font-black text-black italic">AK</span>
+                  <span className="text-3xl md:text-5xl font-black text-black italic">AK</span>
                )}
             </motion.div>
-            <h2 className="text-6xl md:text-[8rem] font-black tracking-tighter leading-none mb-6">Ansh Kesharwani</h2>
-            <p className="text-[#6C5CE7] font-black tracking-[0.8em] text-xs uppercase mb-16">Independent Product Architect</p>
-            <p className="text-white/70 text-3xl md:text-5xl leading-tight mb-20 font-medium tracking-tighter">
+            <h2 className="text-4xl md:text-[8rem] font-black tracking-tighter leading-none mb-4 md:mb-6 text-white text-center">Ansh Kesharwani</h2>
+            <p className="text-[#6C5CE7] font-black tracking-[0.4em] md:tracking-[0.8em] text-[8px] md:text-xs uppercase mb-10 md:mb-16 text-white text-center">Independent Product Architect</p>
+            <p className="text-white/70 text-lg md:text-5xl leading-tight mb-10 md:mb-20 font-medium tracking-tighter px-4 text-center">
                {settings.bio}
             </p>
-            <div className="flex flex-wrap justify-center gap-6">
-               <a href={settings.github} target="_blank" className="px-14 py-6 rounded-2xl bg-white text-black font-black flex items-center gap-3 hover:scale-105 transition-all text-xl">
-                 <Github size={24} /> GITHUB
+            <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 px-4">
+               <a href={settings.github} target="_blank" className="w-full sm:w-auto px-10 py-5 md:px-14 md:py-6 rounded-xl md:rounded-2xl bg-white text-black font-black flex items-center justify-center gap-3 hover:scale-105 transition-all text-base md:text-xl">
+                 <Github size={20} /> GITHUB
                </a>
                <a
                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${settings.email || 'anshkesharwani0807@gmail.com'}`}
                  target="_blank"
                  rel="noopener noreferrer"
-                 className="px-14 py-6 rounded-2xl glass text-white font-black flex items-center gap-3 hover:bg-white/10 transition-all text-xl cursor-pointer relative z-[100]"
+                 className="w-full sm:w-auto px-10 py-5 md:px-14 md:py-6 rounded-xl md:rounded-2xl glass text-white font-black flex items-center justify-center gap-3 hover:bg-white/10 transition-all text-base md:text-xl relative z-[100]"
                >
-                 <Mail size={24} /> CONTACT
+                 <Mail size={20} /> CONTACT
                </a>
             </div>
-            <p className="mt-8 text-white/30 font-bold tracking-widest text-sm uppercase">
+            <p className="mt-8 text-white/30 font-bold tracking-widest text-[8px] md:text-sm uppercase text-center">
                Direct: {settings.email || 'anshkesharwani0807@gmail.com'}
             </p>
          </div>
       </section>
 
       {/* 🏁 FOOTER */}
-      <footer className="py-32 px-12 border-t border-white/5 bg-[#010101] text-center">
-        <div className="flex items-center justify-center gap-4 mb-16 opacity-60">
-           <div className="w-8 h-8 rounded-lg overflow-hidden grayscale">
+      <footer className="py-20 md:py-32 px-6 md:px-12 border-t border-white/5 bg-[#010101] text-center">
+        <div className="flex items-center justify-center gap-4 mb-10 md:mb-16 opacity-60">
+           <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg overflow-hidden grayscale">
               <img src={settings.appLogo || '/logo.png'} className="w-full h-full object-cover" />
            </div>
-           <span className="font-black text-3xl tracking-tighter italic uppercase">MELODIFY</span>
+           <span className="font-black text-xl md:text-3xl tracking-tighter italic uppercase text-white">MELODIFY</span>
         </div>
-        <div className="flex justify-center gap-16 text-[10px] font-black tracking-[0.4em] text-white/70 uppercase mb-16">
+        <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-[8px] md:text-[10px] font-black tracking-[0.3em] md:tracking-[0.4em] text-white/70 uppercase mb-10 md:mb-16">
            <a href="#" className="hover:text-white transition-colors">Privacy</a>
            <a href="/admin" className="hover:text-white transition-colors text-[#6C5CE7]">Developer Portal</a>
            <a href={settings.github} target="_blank" className="hover:text-white transition-colors">Source</a>
         </div>
-        <p className="text-white/50 font-black tracking-[0.4em] uppercase text-[10px]">
+        <p className="text-white/50 font-black tracking-[0.2em] md:tracking-[0.4em] uppercase text-[6px] md:text-[10px] px-4">
           &copy; 2026 OFFICIAL MELODIFY WEB EXPERIENCE &bull; DESIGNED FOR THE FUTURE
         </p>
       </footer>
