@@ -2,16 +2,19 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const getSupabase = () => {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+};
 
 async function isAuthenticated() {
   const cookieStore = await cookies();
   const session = cookieStore.get('admin_session');
   if (!session) return false;
 
+  const supabase = getSupabase();
   const { data } = await supabase
     .from('site_settings')
     .select('data')
@@ -23,6 +26,7 @@ async function isAuthenticated() {
 
 export async function GET() {
   try {
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('site_settings')
       .select('data')
@@ -46,6 +50,7 @@ export async function POST(request: Request) {
 
   try {
     const newSettings = await request.json();
+    const supabase = getSupabase();
 
     // Get current settings first
     const { data: current } = await supabase
