@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
-    if (!file) return NextResponse.json({ error: 'No file' }, status: 400);
+    if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 });
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
