@@ -2,31 +2,40 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import admin from 'firebase-admin';
 
-if (!admin.apps.length) {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY
-    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"(.*)"$/, '$1')
-    : undefined;
+export const dynamic = 'force-dynamic';
 
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey,
-    }),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  });
-}
+const initFirebase = () => {
+  if (!admin.apps.length) {
+    try {
+      const privateKey = process.env.FIREBASE_PRIVATE_KEY
+        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '')
+        : undefined;
 
-const bucket = admin.storage().bucket();
+      if (!privateKey) throw new Error('Firebase Private Key is missing');
+
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: privateKey,
+        }),
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      });
+    } catch (error) {
+      console.error('Firebase Init Error:', error);
+    }
+  }
+  return admin.storage().bucket();
+};
 
 export async function POST(request: Request) {
-  // Simple session check via cookie presence (validation happens in settings)
   const cookieStore = await cookies();
   if (!cookieStore.get('admin_session')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const bucket = initFirebase();
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -45,13 +54,12 @@ export async function POST(request: Request) {
       metadata: { contentType: file.type },
     });
 
-    // Make public and get URL
     await fileUpload.makePublic();
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error) {
-    console.error('Firebase Error:', error);
+    console.error('Upload error:', error);
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }
