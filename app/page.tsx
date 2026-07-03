@@ -1,5 +1,6 @@
 'use client';
 
+// Melodify Official Website v2.0.0
 import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
